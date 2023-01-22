@@ -1,6 +1,8 @@
 import './css/styles.css';
 import Notiflix from 'notiflix';
 import PhotoApi from './photo-api';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const refs = {
   form: document.querySelector('.search-form'),
@@ -44,8 +46,8 @@ async function onLoadMore() {
   try {
     await photoApi.fetchPhoto().then(data => {
       const pages = Math.round(data.totalHits / photoApi.perPage);
-      const page = photoApi.page - 1;
-      if (page === pages) {
+
+      if (photoApi.page > pages) {
         Notiflix.Notify.info(
           "We're sorry, but you've reached the end of search results."
         );
@@ -54,6 +56,8 @@ async function onLoadMore() {
       }
 
       createPhotoMarkup(data.hits);
+      let gallery = new SimpleLightbox('.gallery a');
+      gallery.refresh();
     });
   } catch (err) {
     console.log(err);
@@ -71,9 +75,10 @@ async function createPhotoMarkup(photos) {
         views,
         comments,
         downloads,
-      }) =>
-        `<div class="photo-card">
-         <img src="${webformatURL}" alt="${tags}" loading="lazy" class="photo" />
+      }) => `<div class="photo-card">
+        <a class="gallery__link" href="${largeImageURL}">
+             <img src="${webformatURL}" alt="${tags}" loading="lazy" class="photo" />
+             
          <div class="info">
            <p class="info-item">
              <b>Likes</b>
@@ -92,9 +97,13 @@ async function createPhotoMarkup(photos) {
              <span>${downloads}</span> 
            </p>
          </div>
+        </a>
       </div>`
     );
     refs.gallery.insertAdjacentHTML('beforeend', photoMarkup.join(''));
+
+    let gallery = new SimpleLightbox('.gallery a');
+    gallery.on('show.simplelightbox');
   } catch (err) {
     console.log(err);
   }

@@ -30,6 +30,7 @@ button {
   height: 35px;
   border-radius: 3px;
   border: none;
+  cursor: pointer;
 }
 
 .more-btn-container {
@@ -70,4 +71,9 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.gallery__link {
+  text-decoration: none;
+  color: #212121;
 }
